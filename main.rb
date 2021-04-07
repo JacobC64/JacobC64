@@ -1,22 +1,115 @@
 #!/usr/bin/ruby
-
 require "uri"
 require "net/http"
+require 'json'
 
+url = URI("https://api.tdameritrade.com/v1/oauth2/token")
+
+https = Net::HTTP.new(url.host, url.port)
+https.use_ssl = true
+
+request = Net::HTTP::Post.new(url)
+request["Content-Type"] = "application/x-www-form-urlencoded"
+request.body = "grant_type=refresh_token&refresh_token=78y1tQD3Gm%2F9Ho2kpXKb0PwPKUfWsA2nHyN5oHJmFCEltUtM0UxKNTUkn11b%2FGAmlXLkDy8mJD4bal%2Fcg0iyVjxptbyHSM1jgoJkEMgC8aMayoQifYcd2lFa8wQMWZ0%2F9VEVxln%2Fq2IuLWA75ngqBj7K7K5niKWWuyGR5j7UR5lUKJLLrNQ1VLcQLXIBOvichqiqczUlZcDd1qUW8Tk9jCPYxic8GFxddV5Wg01J9aFHKbykPto%2FgJMhvCBi8qhrH3Xb64lh6ScaQFiAzCjXkXojwSDsAPN2MuzQ4xFVlX3amVtXfCMZlEN2UqrXre7gufUHtVtiIV8UIGk1R94lpuZniskCYFrr%2Fq5GEBVkJcuYjn19pTAJx5hvgH9kapiH3eBiioFcag8n9KTblybnhoRTax9etniVqn80rsCqSVf9drg32%2Fhx4EjQFbz100MQuG4LYrgoVi%2FJHHvl5N31xivZ2WhnZUMmWHPr%2FX7FB1wRwtz%2FmdwI8FFSl2yI7vhnkb7ikV9Yu7tbRLwWm9e5%2FyrXUCdiEGWiJRN2EL32Y4b1uTyhPQdHIyF3cPbt2728sxr%2FWjIMNSGvIvInVr14pGhB1Su9SXo4jO1CM1iVZMBCOcKGrKz92n6PLMEFFGrtNOk1lA69SiUUwTHg%2B4f0T4dVC8ahWrytCOrHAUiDOtF6WRIzHv7SRngN6xeNLVw0axk%2BrsMby98oyxlsD1K5RRma3f7iuZEtU9%2FdNp%2FFEZEfDxeuSO4X%2F1nEh4L%2BNFDDAuDysQsQQxetSqmFthBC0yBTIvzdXG8pD0iiXIqDjt91Vp5ts163ckr0zI9Lgz8%2BsgMp0o8ygdFHuGe13H8nGqZE1fKgOuzXt7SWNNFEhoAXxyiyVr9Wea%2Fc9X4DHKcZxuwAmpZdbjU%3D212FD3x19z9sWBHDJACbC00B75E&access_type=&code=&client_id=GJ1DP6LYGCSF9QRKG7N2ERUYVLWHCGAO&redirect_uri=http%3A%2F%2Flocalhost"
+
+response = https.request(request)
+puts response.body
+data = JSON.parse(response.body)
+$accessToken = data["access_token"]
+mins = 0
+isBuy = true
+isSell = true
 loop do
-    currTime = Time.new 
+    
+    currTime = Time.now 
+
+    puts currTime.inspect
+    #gets new access token every 30 minutes
+    if (mins >= 30)
+        url = URI("https://api.tdameritrade.com/v1/oauth2/token")
+
+        https = Net::HTTP.new(url.host, url.port)
+        https.use_ssl = true
+        
+        request = Net::HTTP::Post.new(url)
+        request["Content-Type"] = "application/x-www-form-urlencoded"
+        request.body = "grant_type=refresh_token&refresh_token=78y1tQD3Gm%2F9Ho2kpXKb0PwPKUfWsA2nHyN5oHJmFCEltUtM0UxKNTUkn11b%2FGAmlXLkDy8mJD4bal%2Fcg0iyVjxptbyHSM1jgoJkEMgC8aMayoQifYcd2lFa8wQMWZ0%2F9VEVxln%2Fq2IuLWA75ngqBj7K7K5niKWWuyGR5j7UR5lUKJLLrNQ1VLcQLXIBOvichqiqczUlZcDd1qUW8Tk9jCPYxic8GFxddV5Wg01J9aFHKbykPto%2FgJMhvCBi8qhrH3Xb64lh6ScaQFiAzCjXkXojwSDsAPN2MuzQ4xFVlX3amVtXfCMZlEN2UqrXre7gufUHtVtiIV8UIGk1R94lpuZniskCYFrr%2Fq5GEBVkJcuYjn19pTAJx5hvgH9kapiH3eBiioFcag8n9KTblybnhoRTax9etniVqn80rsCqSVf9drg32%2Fhx4EjQFbz100MQuG4LYrgoVi%2FJHHvl5N31xivZ2WhnZUMmWHPr%2FX7FB1wRwtz%2FmdwI8FFSl2yI7vhnkb7ikV9Yu7tbRLwWm9e5%2FyrXUCdiEGWiJRN2EL32Y4b1uTyhPQdHIyF3cPbt2728sxr%2FWjIMNSGvIvInVr14pGhB1Su9SXo4jO1CM1iVZMBCOcKGrKz92n6PLMEFFGrtNOk1lA69SiUUwTHg%2B4f0T4dVC8ahWrytCOrHAUiDOtF6WRIzHv7SRngN6xeNLVw0axk%2BrsMby98oyxlsD1K5RRma3f7iuZEtU9%2FdNp%2FFEZEfDxeuSO4X%2F1nEh4L%2BNFDDAuDysQsQQxetSqmFthBC0yBTIvzdXG8pD0iiXIqDjt91Vp5ts163ckr0zI9Lgz8%2BsgMp0o8ygdFHuGe13H8nGqZE1fKgOuzXt7SWNNFEhoAXxyiyVr9Wea%2Fc9X4DHKcZxuwAmpZdbjU%3D212FD3x19z9sWBHDJACbC00B75E&access_type=&code=&client_id=GJ1DP6LYGCSF9QRKG7N2ERUYVLWHCGAO&redirect_uri=http%3A%2F%2Flocalhost"
+        
+        response = https.request(request)
+        data = JSON.parse(response.body)
+        $accessToken = data["access_token"]
+        mins = 0
+    end
+    url = URI("https://api.tdameritrade.com/v1/accounts/237054069")
+
+    https = Net::HTTP.new(url.host, url.port)
+    https.use_ssl = true
+
+    request = Net::HTTP::Get.new(url)
+    request["Authorization"] = "Bearer " + $accessToken
+    response = https.request(request)
+    account = JSON.parse(response.body)
+    $accountValue = account["securitiesAccount"]["initialBalances"]["longStockValue"]
+    $stockValue = account["securitiesAccount"]["currentBalances"]["longMarketValue"]
+
     url = URI("https://api.tdameritrade.com/v1/marketdata/GE/quotes?")
 
     https = Net::HTTP.new(url.host, url.port)
     https.use_ssl = true
 
     request = Net::HTTP::Get.new(url)
-    request["Authorization"] = "Bearer SNbJcrbY/8p8e0JpmgoP5M12Ev7Qt4Z/Sh1JUE2qAaksFvTTqokLDUX6o312TOYrEbGDFzY8URnJBFxHqxMGcOEEEfjTCv6cDopn97j04fE4NkSp7vr6DOBLbaNICSIH0nsi4X5Yx/up2IYIS9uDLGyWt8zqXxmswytlMd6ghbFRLfzlc28xU8L3KitAgE1yUwCui4wtTZagJIUTCDW/EA7YbwOCJXf3JvpRtCBVMu2y1Nj08TRBL4ZWuhZdKKlmrqU7gVUS/zYeDhcVhxGQYCLPcstdEmQh2nvGXguT8Gb4Q46FW4AITs3+2rzVKOWI/N6ejKlffIo1JlgU0Y757TFSLDNYA/mi+pswJnT/YGHnkm799eEdpcbWmHynuMdpIkC9Wbh2WvzcMexDBQA4rgB2j5c1Cg2ADoMEmi3CeqqOmifaqOXPSD72IPt1buvNF7/iWm4Ps/zoVwO+PRY0MHOiTQ8iOZH0SAcgghkoWhvfzZrw41UYTPE6nqNhzYw5fCmUNiRpsDNKq4vN9Y70MP4GvIR5oKw31n/kX100MQuG4LYrgoVi/JHHvlUsMBhkWa5sJ8DGeiDDkzKYTcrWSO3p+tFIMyOqEzzBd5JJia4eU3pByBUu6am+9n9a5P9u2ELVFwcrQsZbP/VXMlGYcYSQhm/8wXI2GQtrm3vzlplUlyaJNIkuEpuTPT0cKOLHnY8vg0KozER2+6dBLS+M5jG73qJ4jRb8Mk1MWe5P3bPW96vqTR9YG6tMqAV+8IcMv7Qgu/jgK+S7u9N8zOp6HqoDMqYf5KBlJdFzsKeMd3JZFHg10RUtBZMmJ+XlIf7ylHZDi/vJGrHq94Z4nku+OXcyVV39ha0eaWTOJVRUwPCdxrq7bKzkhCx36PRudW6+Rx6fCK4f1Owl/cXrgHnrCpzy61QufTUKFvs64TnL7DfbnkAhK7KBot38On+SeX8olyvLKMLIMVhU1XoAetWYHEqGZ5eGilz6hGSwudYVKBYZ9taCR9cn8YuL2Gf9S8BkXSuNTlWtoFy+HrRqRqYS/MaexSG+jptQYn51n2ukhiQwjLXKObjUodY8A7BbJqSLXb3CNcY5C4jCfhHx65nQcT+m44jdD+DD212FD3x19z9sWBHDJACbC00B75E"
+    request["Authorization"] = "Bearer " + $accessToken
     
     response = https.request(request)
     puts response.read_body
+    quote = JSON.parse(response.body)
+    $bidPrice =  quote["GE"]["bidPrice"]
+    $markChang =  quote["GE"]["markPercentChangeInDouble"]
+
+    
+    if (isBuy == true && $markChang <= -1.0 || $markChang >= 0.5)
+        url = URI("https://api.tdameritrade.com/v1/accounts/237054069/orders")
+
+        https = Net::HTTP.new(url.host, url.port)
+        https.use_ssl = true
+
+        request = Net::HTTP::Post.new(url)
+        request["Authorization"] = "Bearer " + $accessToken
+        request["Content-Type"] = "application/json"
+        request.body = "{\r\n  \"orderType\": \"MARKET\",\r\n  \"session\": \"NORMAL\",\r\n  \"duration\": \"DAY\",\r\n  \"orderStrategyType\": \"SINGLE\",\r\n  \"orderLegCollection\": [\r\n    {\r\n      \"instruction\": \"Buy\",\r\n      \"quantity\": 1,\r\n      \"instrument\": {\r\n        \"symbol\": \"GE\",\r\n        \"assetType\": \"EQUITY\"\r\n      }\r\n    }\r\n  ]\r\n}"
+
+        response = https.request(request)
+        puts "buy"
+        puts response.read_body
+        isBuy = false
+        isSell = true
+        
+        
+    end
+    if (isSell == true && $markChang >= 1.0)
+        url = URI("https://api.tdameritrade.com/v1/accounts/237054069/orders")
+
+        https = Net::HTTP.new(url.host, url.port)
+        https.use_ssl = true
+        
+        request = Net::HTTP::Get.new(url)
+        request["Authorization"] = "Bearer " + $accessToken
+        request["Content-Type"] = "text/plain"
+        request.body = "{\r\n  \"orderType\": \"MARKET\",\r\n  \"session\": \"NORMAL\",\r\n  \"duration\": \"DAY\",\r\n  \"orderStrategyType\": \"SINGLE\",\r\n  \"orderLegCollection\": [\r\n    {\r\n      \"instruction\": \"SELL\",\r\n      \"quantity\": 1,\r\n      \"instrument\": {\r\n        \"symbol\": \"GE\",\r\n        \"assetType\": \"EQUITY\"\r\n      }\r\n    }\r\n  ]\r\n}"
+        
+        response = https.request(request)
+        isSell = false
+        isBuy = true
+        puts "sell"
+        puts response.read_body
+        
+    end
+
     sleep(60)
-    if (currTime.hour < 10 && currTime.hour >= 16)
+    mins += 1 
+   
+    if (currTime.hour < 10 || currTime.hour >= 16)
+        puts "after hours"
         break
     end
 end
