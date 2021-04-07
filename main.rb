@@ -3,6 +3,7 @@ require "uri"
 require "net/http"
 require 'json'
 
+#gets initiall access token
 url = URI("https://api.tdameritrade.com/v1/oauth2/token")
 
 https = Net::HTTP.new(url.host, url.port)
@@ -40,6 +41,8 @@ loop do
         $accessToken = data["access_token"]
         mins = 0
     end
+
+    # gets account details
     url = URI("https://api.tdameritrade.com/v1/accounts/237054069")
 
     https = Net::HTTP.new(url.host, url.port)
@@ -52,6 +55,7 @@ loop do
     $accountValue = account["securitiesAccount"]["initialBalances"]["longStockValue"]
     $stockValue = account["securitiesAccount"]["currentBalances"]["longMarketValue"]
 
+    #gets quote on specific stock
     url = URI("https://api.tdameritrade.com/v1/marketdata/GE/quotes?")
 
     https = Net::HTTP.new(url.host, url.port)
@@ -66,7 +70,8 @@ loop do
     $bidPrice =  quote["GE"]["bidPrice"]
     $markChang =  quote["GE"]["markPercentChangeInDouble"]
 
-    
+    #checks if in buy state
+    #buys if price is low enough or is trending up
     if (isBuy == true && $markChang <= -1.0 || $markChang >= 0.5)
         url = URI("https://api.tdameritrade.com/v1/accounts/237054069/orders")
 
@@ -86,6 +91,8 @@ loop do
         
         
     end
+    #checks if in sell state
+    #sells if price is high enough
     if (isSell == true && $markChang >= 1.0)
         url = URI("https://api.tdameritrade.com/v1/accounts/237054069/orders")
 
@@ -104,10 +111,10 @@ loop do
         puts response.read_body
         
     end
-
+    # runs loop every 60 seconds
     sleep(60)
     mins += 1 
-   
+    # runs during market hours
     if (currTime.hour < 10 || currTime.hour >= 16)
         puts "after hours"
         break
