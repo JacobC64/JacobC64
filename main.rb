@@ -38,7 +38,7 @@ loop do
         
         request = Net::HTTP::Post.new(url)
         request["Content-Type"] = "application/x-www-form-urlencoded"
-        request.body = "grant_type=refresh_token&refresh_token=78y1tQD3Gm%2F9Ho2kpXKb0PwPKUfWsA2nHyN5oHJmFCEltUtM0UxKNTUkn11b%2FGAmlXLkDy8mJD4bal%2Fcg0iyVjxptbyHSM1jgoJkEMgC8aMayoQifYcd2lFa8wQMWZ0%2F9VEVxln%2Fq2IuLWA75ngqBj7K7K5niKWWuyGR5j7UR5lUKJLLrNQ1VLcQLXIBOvichqiqczUlZcDd1qUW8Tk9jCPYxic8GFxddV5Wg01J9aFHKbykPto%2FgJMhvCBi8qhrH3Xb64lh6ScaQFiAzCjXkXojwSDsAPN2MuzQ4xFVlX3amVtXfCMZlEN2UqrXre7gufUHtVtiIV8UIGk1R94lpuZniskCYFrr%2Fq5GEBVkJcuYjn19pTAJx5hvgH9kapiH3eBiioFcag8n9KTblybnhoRTax9etniVqn80rsCqSVf9drg32%2Fhx4EjQFbz100MQuG4LYrgoVi%2FJHHvl5N31xivZ2WhnZUMmWHPr%2FX7FB1wRwtz%2FmdwI8FFSl2yI7vhnkb7ikV9Yu7tbRLwWm9e5%2FyrXUCdiEGWiJRN2EL32Y4b1uTyhPQdHIyF3cPbt2728sxr%2FWjIMNSGvIvInVr14pGhB1Su9SXo4jO1CM1iVZMBCOcKGrKz92n6PLMEFFGrtNOk1lA69SiUUwTHg%2B4f0T4dVC8ahWrytCOrHAUiDOtF6WRIzHv7SRngN6xeNLVw0axk%2BrsMby98oyxlsD1K5RRma3f7iuZEtU9%2FdNp%2FFEZEfDxeuSO4X%2F1nEh4L%2BNFDDAuDysQsQQxetSqmFthBC0yBTIvzdXG8pD0iiXIqDjt91Vp5ts163ckr0zI9Lgz8%2BsgMp0o8ygdFHuGe13H8nGqZE1fKgOuzXt7SWNNFEhoAXxyiyVr9Wea%2Fc9X4DHKcZxuwAmpZdbjU%3D212FD3x19z9sWBHDJACbC00B75E&access_type=&code=&client_id=GJ1DP6LYGCSF9QRKG7N2ERUYVLWHCGAO&redirect_uri=http%3A%2F%2Flocalhost"
+        request.body = "grant_type=refresh_token&refresh_token=" + "#{rToken}" + "&access_type=&code=&client_id=GJ1DP6LYGCSF9QRKG7N2ERUYVLWHCGAO&redirect_uri=http%3A%2F%2Flocalhost"
         
         response = https.request(request)
         data = JSON.parse(response.body)
